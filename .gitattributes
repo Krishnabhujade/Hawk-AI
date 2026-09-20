@@ -1,0 +1,8 @@
+# Normalise line endings so Windows and CI don't fight over them.
+* text=auto eol=lf
+
+# Binary / generated
+*.png binary
+*.svg text
+*.csv text
+package-lock.json -diff

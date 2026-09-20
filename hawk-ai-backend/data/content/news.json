@@ -1,0 +1,47 @@
+[
+  {
+    "id": "n1",
+    "time": "11:42",
+    "symbol": "NIFTY 50",
+    "sentiment": "Positive",
+    "headline": "FII cash-market buying turns net positive for a fourth straight session",
+    "impact": "Index breadth improving",
+    "explanation": "Similar FII flow prints preceded a +0.8% index drift within the hour in 64% of matched cases."
+  },
+  {
+    "id": "n2",
+    "time": "11:31",
+    "symbol": "TATAMOTORS",
+    "sentiment": "Positive",
+    "headline": "Auto retail volumes beat street estimates for the festive quarter",
+    "impact": "Sector rotation live",
+    "explanation": "Engine lifted the TATA MOTORS call from 64% to 72% on this headline."
+  },
+  {
+    "id": "n3",
+    "time": "11:18",
+    "symbol": "HDFCBANK",
+    "sentiment": "Negative",
+    "headline": "Deposit-cost commentary trims private-bank margin outlook",
+    "impact": "Banking bid fading",
+    "explanation": "Sentiment shift is what flipped the HDFC BANK wedge into a SELL."
+  },
+  {
+    "id": "n4",
+    "time": "10:57",
+    "symbol": "INFY",
+    "sentiment": "Neutral",
+    "headline": "Rupee holds range as IT majors trade sideways into the US open",
+    "impact": "No edge yet",
+    "explanation": "Range compression keeps the INFOSYS call on WAIT until the break."
+  },
+  {
+    "id": "n5",
+    "time": "10:34",
+    "symbol": "RELIANCE",
+    "sentiment": "Positive",
+    "headline": "Retail arm signals faster store additions in second half",
+    "impact": "Volume confirming",
+    "explanation": "Order-flow imbalance supports the bull-flag continuation read."
+  }
+]

@@ -1,0 +1,25 @@
+# Repo-wide ignores. Each app also has its own .gitignore with rules
+# specific to it (hawk-ai-backend/.gitignore, hawk-ai-frontend/.gitignore).
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+*.log
+
+# Environment and secrets — never commit these
+.env
+.env.local
+.env.*.local
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

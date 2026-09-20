@@ -1,0 +1,274 @@
+{
+  "headline": [
+    {
+      "label": "CAGR",
+      "value": "24.6%"
+    },
+    {
+      "label": "Sharpe",
+      "value": "1.82"
+    },
+    {
+      "label": "Max drawdown",
+      "value": "−11.3%"
+    },
+    {
+      "label": "Profit factor",
+      "value": "1.94"
+    }
+  ],
+  "equity": [
+    {
+      "quarter": "2016 Q1",
+      "value": 34.0,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2016 Q2",
+      "value": 41.3,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2016 Q3",
+      "value": 35.1,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2016 Q4",
+      "value": 32.4,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2017 Q1",
+      "value": 42.3,
+      "outOfSample": true
+    },
+    {
+      "quarter": "2017 Q2",
+      "value": 45.5,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2017 Q3",
+      "value": 37.8,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2017 Q4",
+      "value": 39.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2018 Q1",
+      "value": 49.8,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2018 Q2",
+      "value": 48.4,
+      "outOfSample": true
+    },
+    {
+      "quarter": "2018 Q3",
+      "value": 41.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2018 Q4",
+      "value": 47.8,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2019 Q1",
+      "value": 56.0,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2019 Q2",
+      "value": 50.7,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2019 Q3",
+      "value": 46.8,
+      "outOfSample": true
+    },
+    {
+      "quarter": "2019 Q4",
+      "value": 56.2,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2020 Q1",
+      "value": 60.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2020 Q2",
+      "value": 53.2,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2020 Q3",
+      "value": 53.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2020 Q4",
+      "value": 64.0,
+      "outOfSample": true
+    },
+    {
+      "quarter": "2021 Q1",
+      "value": 63.8,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2021 Q2",
+      "value": 56.5,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2021 Q3",
+      "value": 61.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2021 Q4",
+      "value": 70.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2022 Q1",
+      "value": 66.2,
+      "outOfSample": true
+    },
+    {
+      "quarter": "2022 Q2",
+      "value": 61.4,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2022 Q3",
+      "value": 70.0,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2022 Q4",
+      "value": 75.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2023 Q1",
+      "value": 68.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2023 Q2",
+      "value": 67.7,
+      "outOfSample": true
+    },
+    {
+      "quarter": "2023 Q3",
+      "value": 78.0,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2023 Q4",
+      "value": 79.2,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2024 Q1",
+      "value": 71.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2024 Q2",
+      "value": 75.4,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2024 Q3",
+      "value": 85.0,
+      "outOfSample": true
+    },
+    {
+      "quarter": "2024 Q4",
+      "value": 81.8,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2025 Q1",
+      "value": 76.0,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2025 Q2",
+      "value": 83.7,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2025 Q3",
+      "value": 90.6,
+      "outOfSample": false
+    },
+    {
+      "quarter": "2025 Q4",
+      "value": 84.1,
+      "outOfSample": true
+    }
+  ],
+  "patterns": [
+    {
+      "name": "Ascending triangle",
+      "samples": 1842,
+      "hitRate": 71.4,
+      "avgMove": 1.8,
+      "medianMin": 19
+    },
+    {
+      "name": "Cup and handle",
+      "samples": 508,
+      "hitRate": 69.1,
+      "avgMove": 2.1,
+      "medianMin": 26
+    },
+    {
+      "name": "Bull flag",
+      "samples": 964,
+      "hitRate": 66.2,
+      "avgMove": 1.2,
+      "medianMin": 17
+    },
+    {
+      "name": "Head and shoulders",
+      "samples": 846,
+      "hitRate": 65.4,
+      "avgMove": -1.4,
+      "medianMin": 23
+    },
+    {
+      "name": "Rising wedge",
+      "samples": 731,
+      "hitRate": 63.0,
+      "avgMove": -0.9,
+      "medianMin": 21
+    },
+    {
+      "name": "Range compression",
+      "samples": 1105,
+      "hitRate": 57.8,
+      "avgMove": 0.3,
+      "medianMin": 31
+    }
+  ],
+  "method": [
+    "OHLCV across NIFTY 500 and every sector index, at 1-minute, 5-minute and 15-minute resolution.",
+    "Walk-forward re-fit every three to six months; the final 20% of history is held out untouched.",
+    "Monte Carlo simulation of slippage and latency, plus full brokerage and tax modelling.",
+    "Cross-market verification against equity, futures and index series.",
+    "News-sentiment tagging and volatility clustering applied before pattern matching."
+  ],
+  "note": "Figures shown are illustrative placeholders for the concept build. Replace data/content/backtest.json with your real backtest results before any presentation."
+}

@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.pytest_cache/
+data/hawk.db
+data/hawk.db-wal
+data/hawk.db-shm
+data/.jwt_secret
+data/cache/
+data/raw/**/*.csv
+models/*.joblib
