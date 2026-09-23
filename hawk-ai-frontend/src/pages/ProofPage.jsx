@@ -2,7 +2,7 @@ import EquityBars from '../components/proof/EquityBars';
 import PatternTable from '../components/proof/PatternTable';
 import Blueprint from '../components/ui/Blueprint';
 import { ErrorBox, Loading } from '../components/ui/Status';
-import { api } from '../api';
+import { api, USE_MOCK } from '../api';
 import { useApi } from '../hooks/useApi';
 import { usePageTitle } from '../hooks/usePageTitle';
 
@@ -11,9 +11,27 @@ export default function ProofPage() {
   usePageTitle('Proof');
   const { data, error, reload } = useApi(() => api.getBacktest(), []);
 
+  // These figures only mean something once a trained model has actually been
+  // backtested. While the backend is still serving the placeholder predictor,
+  // say so on screen instead of showing invented numbers as results. The
+  // banner disappears by itself once PREDICTOR=model is serving real output.
+  const status = useApi(() => (USE_MOCK ? Promise.resolve(null) : api.getStatus()), []);
+  const predictor = status.data?.predictor;
+  const isPlaceholder = USE_MOCK || !predictor || /^sample/i.test(predictor);
+
   return (
     <main className="page page-scroll page-proof">
       <div className="proof-wrap">
+        {isPlaceholder && (
+          <div className="proof-placeholder" role="note">
+            <span className="tag tag-neutral">ILLUSTRATIVE</span>
+            <span>
+              These figures are <strong>placeholders</strong>, not measured results — the prediction model is still in
+              development{predictor ? ` (currently serving “${predictor}”)` : ''}. They will be replaced by a real
+              backtest before any of them can be quoted.
+            </span>
+          </div>
+        )}
         <div className="proof-hero">
           <div>
             <span className="kicker proof-kicker">10-YEAR BACKTEST VALIDATION</span>

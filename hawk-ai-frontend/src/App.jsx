@@ -4,6 +4,7 @@ import RequireAuth from './components/layout/RequireAuth';
 import LoginPage from './pages/LoginPage';
 import MarketPage from './pages/MarketPage';
 import NotFoundPage from './pages/NotFoundPage';
+import OrdersPage from './pages/OrdersPage';
 import ProofPage from './pages/ProofPage';
 import SettingsPage from './pages/SettingsPage';
 import TerminalPage from './pages/TerminalPage';
@@ -22,6 +23,7 @@ export default function App() {
         <Route index element={<Navigate to="/terminal" replace />} />
         <Route path="terminal" element={<TerminalPage />} />
         <Route path="market" element={<MarketPage />} />
+        <Route path="orders" element={<OrdersPage />} />
         <Route path="proof" element={<ProofPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>

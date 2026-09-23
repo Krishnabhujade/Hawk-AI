@@ -7,6 +7,7 @@ original design, plus a phone/tablet layout, a login page and a settings page.
 |---|---|
 | **Terminal** | Watchlist, candle chart with the AI forecast cone, the AI call (Verdict or Ladder view), order ticket with a confirm step |
 | **Market** | Market pulse, index cards, 5 screeners, sector heatmap, news & sentiment, policy watch |
+| **Orders** | Every paper order with live P&L, a portfolio summary, All/Open/Closed filters and a Close button |
 | **Proof** | 10-year backtest stats, walk-forward equity, pattern performance, method |
 | **Login** | Sign-in form (demo mode accepts any email + password) |
 | **Settings** | Forecast horizon, default call view and timeframe, live updates, order confirmation, broker placeholders, sign out |
@@ -52,7 +53,7 @@ src/
 ├── context/              ← AuthContext (login state), SettingsContext (saved preferences)
 ├── hooks/                ← useApi (load + poll data), useClock, usePageTitle
 ├── lib/                  ← chart geometry, prediction maths (target, stop, ladder), formatting
-├── pages/                ← TerminalPage, MarketPage, ProofPage, LoginPage, SettingsPage, NotFoundPage
+├── pages/                ← TerminalPage, MarketPage, OrdersPage, ProofPage, LoginPage, SettingsPage, NotFoundPage
 └── styles/
     ├── tokens.css        ← design system: colours, fonts, buttons, tables (change the look here)
     └── app.css           ← layout for every screen + responsive rules
@@ -106,7 +107,11 @@ Times are epoch **milliseconds**; percentages are plain numbers (`0.56` means +0
 | `GET /api/news` | `[{ id, time, symbol, sentiment, headline, impact, explanation }]` |
 | `GET /api/policy` | `[{ id, source, text }]` |
 | `GET /api/backtest/summary` | `{ headline, equity, patterns, method, note }` |
-| `POST /api/orders` | `{ id, status }` |
+| `POST /api/orders` | `{ id, status, fillPrice }` |
+| `GET /api/orders?status=OPEN` | `[{ id, symbol, side, quantity, entryPrice, target, stopLoss, status, placedAt, marketTime, exitPrice, exitMarketTime, exitReason, lastPrice, pnl }]` |
+| `POST /api/orders/{id}/close` | the closed order, same shape as a row above |
+| `GET /api/portfolio` | `{ openPositions, closedTrades, realizedPnl, unrealizedPnl, winRate }` |
+| `GET /api/status` | `{ status, provider, dataSource, replayDate, marketTime, predictor, symbols }` |
 
 Timeframes: `1m`, `5m`, `15m`, `30m`. Screener ids: `multibagger`, `volume-gainers`, `volume-losers`,
 `active-volume`, `active-value`.
@@ -144,6 +149,11 @@ from `expectedMovePct` and the latest candle.
 { "symbol": "NIFTY", "side": "BUY", "quantity": 75, "orderType": "BRACKET",
   "entry": 24214.52, "target": 24650.38, "stopLoss": 24018.38 }
 ```
+
+The four order and portfolio endpoints need `Authorization: Bearer <token>`; everything else is open.
+`status` is `OPEN` or `CLOSED`, and `exitReason` on a closed order is `TARGET`, `STOP`, `SQUARE_OFF`
+(the 15:20 auto-close) or `MANUAL`. `lastPrice` is set while an order is open and `exitPrice` once it
+has closed. `winRate` is `null` until at least one trade has closed.
 
 **Market overview**:
 

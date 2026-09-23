@@ -21,7 +21,10 @@ export default function TerminalPage() {
   const horizonMin = settings.horizonMin;
   const horizonLabel = `${horizonMin} min`;
 
-  const [symbol, setSymbol] = useState('NIFTY');
+  // The Terminal opens on the first symbol in the watchlist. `chosen` stays null
+  // until the user picks one, so the default follows whatever WATCHLIST the
+  // backend is serving instead of being hardcoded to NIFTY.
+  const [chosen, setChosen] = useState(null);
   const [timeframe, setTimeframe] = useState(settings.timeframe);
   const [view, setView] = useState(settings.callView);
   const [qtyBySymbol, setQtyBySymbol] = useState({});
@@ -30,17 +33,22 @@ export default function TerminalPage() {
   const [orderError, setOrderError] = useState('');
   const [orderNote, setOrderNote] = useState(DEFAULT_NOTE);
 
-  // Each response is tagged with the symbol it belongs to, so a slow reply
-  // for the previous symbol is never mixed with the new one.
-  const tag = (promise) => promise.then((data) => ({ symbol, data }));
   const watchlist = useApi(() => api.getWatchlist(), [], { refreshMs: live ? 15000 : 0 });
-  const candlesRes = useApi(() => tag(api.getCandles(symbol, timeframe)), [symbol, timeframe], {
+  const symbol = chosen ?? watchlist.data?.[0]?.symbol ?? '';
+
+  // Each response is tagged with the symbol it belongs to, so a slow reply
+  // for the previous symbol is never mixed with the new one. Until the
+  // watchlist has loaded there is no symbol yet, so the fetches resolve to
+  // null rather than asking the backend for "".
+  const tag = (promise) => promise.then((data) => ({ symbol, data }));
+  const forSymbol = (fetcher) => (symbol ? tag(fetcher()) : Promise.resolve(null));
+  const candlesRes = useApi(() => forSymbol(() => api.getCandles(symbol, timeframe)), [symbol, timeframe], {
     refreshMs: live ? 30000 : 0,
   });
-  const predictionRes = useApi(() => tag(api.getPrediction(symbol, horizonMin)), [symbol, horizonMin], {
+  const predictionRes = useApi(() => forSymbol(() => api.getPrediction(symbol, horizonMin)), [symbol, horizonMin], {
     refreshMs: live ? 30000 : 0,
   });
-  const quoteRes = useApi(() => tag(api.getQuote(symbol)), [symbol], { refreshMs: live ? 1500 : 0 });
+  const quoteRes = useApi(() => forSymbol(() => api.getQuote(symbol)), [symbol], { refreshMs: live ? 1500 : 0 });
 
   const current = (res) => ({ ...res, data: res.data?.symbol === symbol ? res.data.data : null });
   const candles = current(candlesRes);
@@ -58,7 +66,7 @@ export default function TerminalPage() {
   const quantity = qtyBySymbol[symbol] ?? prediction.data?.suggestedQty ?? 1;
 
   function selectSymbol(next) {
-    setSymbol(next);
+    setChosen(next);
     setOrderNote(DEFAULT_NOTE);
   }
 

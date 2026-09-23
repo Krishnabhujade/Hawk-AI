@@ -172,10 +172,130 @@ export async function getBacktest() {
   return { headline: BACKTEST_HEADLINE, equity, patterns: PATTERNS, method: METHOD, note: BACKTEST_NOTE };
 }
 
+// ---------------------------------------------------------------- paper orders
+// Sample-data mode keeps orders in memory for the life of the page, so the
+// Orders screen has something real to show in the demo. A refresh clears them;
+// the real backend stores them in SQLite.
+
+const ORDERS = [];
+let nextOrderId = 1;
+
+const pnlOf = (side, entry, exit, qty) =>
+  round((exit - entry) * qty * (side === 'BUY' ? 1 : -1));
+
+/** Current price for an order's symbol, falling back to its entry if unknown. */
+function priceFor(order) {
+  try {
+    return livePrice(findSymbol(order.symbol), true);
+  } catch {
+    return order.entryPrice;
+  }
+}
+
 export async function placeOrder(order) {
   await wait(400);
   if (!order?.symbol || !order?.side || !(order.quantity > 0)) {
     throw new ApiError('Order is missing symbol, side or quantity.', 400);
   }
-  return { id: `HWK-${Math.floor(1000 + Math.random() * 9000)}`, status: 'QUEUED' };
+  const fillPrice = round(livePrice(findSymbol(order.symbol), true));
+  // Same bracket rule the backend applies, so the demo rejects the same orders.
+  const ok = order.side === 'BUY'
+    ? order.target > fillPrice && fillPrice > order.stopLoss
+    : order.target < fillPrice && fillPrice < order.stopLoss;
+  if (!ok) {
+    throw new ApiError(
+      order.side === 'BUY'
+        ? `For a BUY at ${fillPrice.toFixed(2)}, the target must be above it and the stop loss below it.`
+        : `For a SELL at ${fillPrice.toFixed(2)}, the target must be below it and the stop loss above it.`,
+      400,
+    );
+  }
+  const now = new Date();
+  const id = `HWK-${String(nextOrderId++).padStart(5, '0')}`;
+  ORDERS.unshift({
+    id,
+    symbol: order.symbol,
+    side: order.side,
+    quantity: order.quantity,
+    entryPrice: fillPrice,
+    target: round(order.target),
+    stopLoss: round(order.stopLoss),
+    status: 'OPEN',
+    placedAt: now.toISOString(),
+    marketTime: now.toISOString().slice(0, 19),
+    exitPrice: null,
+    exitMarketTime: null,
+    exitReason: null,
+    lastPrice: fillPrice,
+    pnl: 0,
+  });
+  return { id, status: 'OPEN', fillPrice };
+}
+
+export async function getOrders(status) {
+  await wait(120);
+  // Mark to market, and close anything that has touched its target or stop.
+  for (const o of ORDERS) {
+    if (o.status !== 'OPEN') continue;
+    const price = priceFor(o);
+    const buy = o.side === 'BUY';
+    const hitStop = buy ? price <= o.stopLoss : price >= o.stopLoss;
+    const hitTarget = buy ? price >= o.target : price <= o.target;
+    if (hitStop || hitTarget) {
+      // Stop wins a tie, same as the backend engine.
+      o.exitPrice = hitStop ? o.stopLoss : o.target;
+      o.exitReason = hitStop ? 'STOP' : 'TARGET';
+      o.exitMarketTime = new Date().toISOString().slice(0, 19);
+      o.status = 'CLOSED';
+      o.lastPrice = null;
+      o.pnl = pnlOf(o.side, o.entryPrice, o.exitPrice, o.quantity);
+    } else {
+      o.lastPrice = round(price);
+      o.pnl = pnlOf(o.side, o.entryPrice, price, o.quantity);
+    }
+  }
+  const wanted = status ? String(status).toUpperCase() : null;
+  return ORDERS.filter((o) => !wanted || o.status === wanted).map((o) => ({ ...o }));
+}
+
+export async function closeOrder(id) {
+  await wait(250);
+  const order = ORDERS.find((o) => o.id === id);
+  if (!order) throw new ApiError(`Order ${id} not found.`, 404);
+  if (order.status === 'OPEN') {
+    order.exitPrice = round(priceFor(order));
+    order.exitReason = 'MANUAL';
+    order.exitMarketTime = new Date().toISOString().slice(0, 19);
+    order.status = 'CLOSED';
+    order.lastPrice = null;
+    order.pnl = pnlOf(order.side, order.entryPrice, order.exitPrice, order.quantity);
+  }
+  return { ...order };
+}
+
+export async function getPortfolio() {
+  const all = await getOrders();
+  const closed = all.filter((o) => o.status === 'CLOSED');
+  const open = all.filter((o) => o.status === 'OPEN');
+  const wins = closed.filter((o) => o.pnl > 0).length;
+  return {
+    openPositions: open.length,
+    closedTrades: closed.length,
+    realizedPnl: round(closed.reduce((s, o) => s + o.pnl, 0)),
+    unrealizedPnl: round(open.reduce((s, o) => s + o.pnl, 0)),
+    winRate: closed.length ? round((wins / closed.length) * 100, 1) : null,
+  };
+}
+
+export async function getStatus() {
+  await wait(60);
+  return {
+    status: 'ok',
+    provider: 'mock',
+    dataSource: 'sample',
+    replayDate: new Date().toISOString().slice(0, 10),
+    marketTime: new Date().toTimeString().slice(0, 8),
+    predictor: 'sample-frontend-demo',
+    symbols: UNIVERSE.length,
+  };
 }

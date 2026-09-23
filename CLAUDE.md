@@ -5,8 +5,9 @@
 **SNP HAWK AI** is a final-year IT engineering major project (academic year 2026–27, team of 4),
 sponsored by SNP Innovation Pvt. Ltd. It is an AI-assisted trading terminal for Indian markets
 (NSE). The user watches a live chart, reads an AI call ("UP 75% in the next 30 min → BUY") and
-acts with one tap: a bracket order with target and stop loss attached. The project also needs a
-research paper, so results must be honest and reproducible.
+acts with one tap: a bracket order with target and stop loss attached. It is assessed by a report,
+a demo and a viva, so any number on screen must be one the team can explain when asked — never
+present placeholder figures as measured results.
 
 Scope rule: **paper trading only**. No real broker orders, and no real money.
 
@@ -40,7 +41,12 @@ at once into PowerShell has caused problems before.
     confirm dialog.
   - **Market**: market pulse, index cards, 5 screeners, sector heatmap, news and sentiment,
     policy watch.
-  - **Proof**: backtest stats, walk-forward equity bars, pattern table, method.
+  - **Orders**: every paper order with live P&L, a portfolio summary (open, closed, realised,
+    unrealised, win rate), All/Open/Closed filters and a Close button.
+  - **Proof**: backtest stats, walk-forward equity bars, pattern table, method. While the backend
+    is still serving a `sample-*` predictor the screen shows an "illustrative" banner, so
+    placeholder figures are never presented as measured results. It disappears on its own once
+    `PREDICTOR=model` is serving.
   - **Login**, **Settings** and a **404** page. There is no sign-up screen yet —
     create extra accounts with `POST /api/auth/register` from `/docs`.
 - **Responsive layouts**: desktop (1100px and up), tablet, and phone (bottom tab bar, watchlist
@@ -57,7 +63,9 @@ at once into PowerShell has caused problems before.
   - Any 401 on a request that sent a token signs the user out (`hawk:unauthorized` event).
 - **Settings** are stored in localStorage: forecast horizon 15/30, default call view, default
   timeframe, live updates, confirm orders.
-- **Known gap**: the Terminal's default symbol is hardcoded to `'NIFTY'` in `TerminalPage.jsx`.
+- The Terminal opens on the **first symbol in the watchlist** (it follows whatever `WATCHLIST` the
+  backend serves), and the header shows the **replay date and market time** from `GET /api/status`
+  so the screen is honest that these are replayed prices, not live ones.
 
 ### Backend (`hawk-ai-backend/`)
 
@@ -115,8 +123,9 @@ not yet fully exercised.
 
 1. **Don't break the API contract.** If you change a response shape, update the backend schema,
    the frontend mock and both READMEs together.
-2. **Honesty matters (research paper).** Never present sample or placeholder numbers as real
-   results. Keep the "placeholder" wording until real results replace it.
+2. **Honesty matters (demo and viva).** Never present sample or placeholder numbers as real
+   results. Keep the "placeholder" wording until real results replace it — an examiner asking
+   "how did you calculate that?" must get a real answer.
 3. **Keep dependencies minimal.** No new UI libraries or state managers unless clearly needed.
    Plain CSS in `src/styles/`, with design tokens in `tokens.css`.
 4. **Paper trading only.** Don't add real order placement.
@@ -139,11 +148,10 @@ not yet fully exercised.
    - Adjust the name mappings if they differ.
    - Some watchlist symbols may have been renamed (for example TATAMOTORS). Update the `WATCHLIST`
      default if so.
-3. **Frontend: Orders & P&L screen.** Add a screen listing paper orders (open and closed, with
-   P&L), with a Close button and a portfolio summary, using the existing endpoints. Also:
-   - Make the Terminal's default symbol the first watchlist item instead of `'NIFTY'`.
-   - Show the replay date and time from `GET /api/status` in the header when connected to the
-     API.
+3. ~~**Frontend: Orders & P&L screen.**~~ **DONE (2026-09-23).** `src/pages/OrdersPage.jsx` at
+   `/orders`, using the existing order and portfolio endpoints. The Terminal's default symbol now
+   follows the watchlist, and the header shows the replay date and market time from
+   `GET /api/status`.
 4. **Model integration, only when the team's model is ready.**
    - Help write the training script using `app/ml/features.py`, with a **time-based**
      train/validation/test split (never shuffled) and walk-forward evaluation.

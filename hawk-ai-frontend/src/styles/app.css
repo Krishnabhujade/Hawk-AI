@@ -49,6 +49,14 @@
   animation: hawkPulse 1.6s ease-in-out infinite;
 }
 .header-clock { font-size: 12px; color: var(--ink-55); white-space: nowrap; }
+/* Which past market day the backend is replaying — keeps the screen honest
+   about the fact that these are not live prices. */
+.header-replay {
+  display: flex; align-items: baseline; gap: 6px; white-space: nowrap;
+  font-size: 12px; color: var(--ink-55);
+  padding-left: 18px; border-left: 1px solid var(--color-divider);
+}
+.header-replay .kicker { color: var(--color-accent-700); }
 .avatar {
   width: 30px; height: 30px; flex: none; border: 1px solid var(--color-divider);
   display: grid; place-items: center;
@@ -362,6 +370,60 @@ input.ticket-input:focus-visible { border-color: var(--color-accent); outline-of
 }
 .method-num { font-family: var(--font-heading); font-size: 12px; color: var(--color-accent); padding-top: 2px; }
 .proof-note { padding: 12px 14px; font-size: 11px; line-height: 1.5; color: var(--ink-55); }
+/* Shown while the backtest figures are still placeholders. */
+.proof-placeholder {
+  display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
+  padding: 12px 16px; border: 1px solid var(--color-accent-400);
+  background: var(--color-accent-100);
+  font-size: 13px; line-height: 1.5; color: var(--color-accent-800); text-wrap: pretty;
+}
+.proof-placeholder > span:last-child { flex: 1; min-width: 260px; }
+
+/* ---------- Orders & P&L ---------- */
+.page-orders { padding: 26px 26px 34px; }
+.orders-wrap { max-width: 1180px; display: flex; flex-direction: column; gap: 20px; }
+.orders-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.orders-title { margin: 8px 0 10px; font-size: 40px; }
+.orders-lead { margin: 0; font-size: 14px; max-width: 70ch; line-height: 1.5; text-wrap: pretty; }
+
+.orders-summary {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px;
+  padding: 16px 0; border-block: 1px solid var(--color-divider);
+}
+.orders-summary .headline-value { font-size: 26px; }
+
+.orders-section { min-width: 0; }
+.orders-table { white-space: nowrap; }
+.orders-table th, .orders-table td { padding-block: 9px; }
+.cell-order-id { color: var(--ink-55); font-size: 13px; }
+.cell-status { font-size: 12px; }
+.order-reason { color: var(--ink-70); }
+.order-reason-time { color: var(--ink-45); }
+.btn-close-order { padding: 3px 12px; font-size: 11px; }
+
+.orders-empty {
+  padding: 38px 20px; text-align: center;
+  border: 1px dashed var(--color-divider);
+}
+.orders-empty-title { margin: 0 0 6px; font-family: var(--font-heading); font-size: 17px; letter-spacing: 0.04em; }
+.orders-empty p { margin: 0; font-size: 13px; }
+
+.orders-disclaimer {
+  margin: 0; padding-top: 12px; border-top: 1px solid var(--color-divider);
+  font-size: 11px; line-height: 1.5; color: var(--ink-45);
+}
+
+@media (max-width: 1099px) {
+  .orders-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .orders-title { font-size: 32px; }
+}
+@media (max-width: 719px) {
+  .page-orders { padding: 18px 16px 28px; }
+  .orders-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .orders-summary .headline-value { font-size: 22px; }
+  .orders-title { font-size: 28px; }
+  .orders-head { align-items: flex-start; }
+}
 
 /* ---------- Login ---------- */
 .login-page { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
@@ -450,6 +512,7 @@ input.ticket-input:focus-visible { border-color: var(--color-accent); outline-of
 @media (max-width: 1099px) {
   .app-header { position: sticky; top: 0; z-index: 20; }
   .header-engine { display: none; }
+  .header-replay { padding-left: 0; border-left: none; }
   .page-scroll { overflow: visible; }
 
   .terminal-grid { grid-template-columns: minmax(0, 1fr); }
@@ -478,7 +541,7 @@ input.ticket-input:focus-visible { border-color: var(--color-accent); outline-of
 }
 
 @media (max-width: 899px) {
-  .header-engine, .header-clock { display: none; }
+  .header-engine, .header-clock, .header-replay { display: none; }
   .steps-bar { gap: 20px; padding: 9px 16px; }
   .step-hint { display: none; }
   .proof-hero, .proof-grid { grid-template-columns: minmax(0, 1fr); }

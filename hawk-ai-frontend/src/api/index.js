@@ -63,7 +63,28 @@ export const api = {
   /** GET /api/backtest/summary → { headline, equity, patterns, method, note } */
   getBacktest: () => (USE_MOCK ? mock.getBacktest() : request('/api/backtest/summary')),
 
-  /** POST /api/orders → { id, status } */
+  /** POST /api/orders → { id, status, fillPrice } */
   placeOrder: (order) =>
     USE_MOCK ? mock.placeOrder(order) : request('/api/orders', { method: 'POST', body: order }),
+
+  /**
+   * GET /api/orders?status=OPEN → [{ id, symbol, side, quantity, entryPrice, target,
+   * stopLoss, status, placedAt, marketTime, exitPrice, exitMarketTime, exitReason,
+   * lastPrice, pnl }]. Omit `status` for every order. Needs a signed-in user.
+   */
+  getOrders: (status) =>
+    USE_MOCK ? mock.getOrders(status) : request('/api/orders', { query: status ? { status } : undefined }),
+
+  /** POST /api/orders/{id}/close → the closed order. Needs a signed-in user. */
+  closeOrder: (id) =>
+    USE_MOCK ? mock.closeOrder(id) : request(`/api/orders/${enc(id)}/close`, { method: 'POST' }),
+
+  /**
+   * GET /api/portfolio → { openPositions, closedTrades, realizedPnl, unrealizedPnl,
+   * winRate }. winRate is null until at least one trade has closed.
+   */
+  getPortfolio: () => (USE_MOCK ? mock.getPortfolio() : request('/api/portfolio')),
+
+  /** GET /api/status → { status, provider, dataSource, replayDate, marketTime, predictor, symbols } */
+  getStatus: () => (USE_MOCK ? mock.getStatus() : request('/api/status')),
 };

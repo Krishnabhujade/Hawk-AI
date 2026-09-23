@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 const ITEMS = [
   { to: '/terminal', label: 'Terminal', icon: 'M3 17l5-6 4 4 7-9' },
   { to: '/market', label: 'Market', icon: 'M4 20V10M10 20V4M16 20v-7M22 20H2' },
+  { to: '/orders', label: 'Orders', icon: 'M4 5h16M4 12h16M4 19h10' },
   { to: '/proof', label: 'Proof', icon: 'M4 12l5 5L20 6' },
   { to: '/settings', label: 'Settings', icon: 'M4 7h10M18 7h2M4 17h4M12 17h8M14 4v6M8 14v6' },
 ];
