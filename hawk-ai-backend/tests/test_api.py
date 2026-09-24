@@ -207,6 +207,24 @@ def test_replay_clock_parsing():
             ReplayClock(day, bad)
 
 
+def test_insecure_defaults_are_flagged_only_when_deployed(caplog):
+    """A deployed host must be told it is still on local-only defaults."""
+    import logging
+    from types import SimpleNamespace
+
+    from app.security import looks_deployed, warn_about_insecure_defaults
+
+    local = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    assert looks_deployed(SimpleNamespace(cors_origins=local)) is False
+    assert looks_deployed(SimpleNamespace(cors_origins=[])) is False
+    assert looks_deployed(SimpleNamespace(cors_origins=local + ["https://hawk.vercel.app"])) is True
+
+    # The running test app is local-only, so it must stay quiet.
+    with caplog.at_level(logging.WARNING, logger="hawk.security"):
+        warn_about_insecure_defaults()
+    assert "SECURITY" not in caplog.text
+
+
 def test_sqlite_uses_wal():
     """WAL keeps concurrent order settlement from hitting "database is locked"."""
     from app.db import connect

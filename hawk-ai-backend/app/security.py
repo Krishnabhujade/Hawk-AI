@@ -4,6 +4,7 @@ import base64
 import binascii
 import hashlib
 import hmac
+import logging
 import secrets
 import sqlite3
 from datetime import timedelta
@@ -16,8 +17,11 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from .config import get_settings
 from .db import get_db, utcnow
 
+log = logging.getLogger("hawk.security")
+
 _ALGO = "pbkdf2_sha256"
 _ITERATIONS = 600_000  # OWASP recommendation for PBKDF2-SHA256
+_LOCAL_HOSTS = ("localhost", "127.0.0.1", "0.0.0.0", "[::1]")
 
 
 def hash_password(password: str) -> str:
@@ -90,11 +94,52 @@ def current_user(
     return user
 
 
+def looks_deployed(settings) -> bool:
+    """True when CORS is open to an origin that isn't a local dev server.
+
+    Used only to decide how loudly to complain about insecure defaults — it
+    never changes behaviour, because guessing wrong should not break someone's
+    setup.
+    """
+    return any(
+        not any(host in origin for host in _LOCAL_HOSTS)
+        for origin in settings.cors_origins
+    )
+
+
+def warn_about_insecure_defaults() -> None:
+    """Shout at startup if a deployment is still running on local-only defaults.
+
+    Both of these are fine on a laptop and dangerous on a public host: the demo
+    account has credentials published in the README, and a generated JWT secret
+    is lost on every restart if the disk is ephemeral.
+    """
+    settings = get_settings()
+    if not looks_deployed(settings):
+        return
+    if settings.seed_demo_user:
+        log.warning(
+            "SECURITY: CORS allows %s, so this looks deployed, but SEED_DEMO_USER is on. "
+            "The account %s is created with the password published in the README. "
+            "Set SEED_DEMO_USER=false.",
+            ", ".join(settings.cors_origins),
+            settings.demo_email,
+        )
+    if not settings.jwt_secret:
+        log.warning(
+            "SECURITY: JWT_SECRET is not set, so a random one is kept in %s. "
+            "On a host with an ephemeral disk that file is lost on every restart and every "
+            "user is signed out. Set JWT_SECRET to a long random string.",
+            settings.data_dir / ".jwt_secret",
+        )
+
+
 def seed_demo_user() -> None:
     """Create the demo account from settings if it doesn't exist yet."""
     from .db import connect
 
     settings = get_settings()
+    warn_about_insecure_defaults()
     if not settings.seed_demo_user:
         return
     with connect() as conn:
