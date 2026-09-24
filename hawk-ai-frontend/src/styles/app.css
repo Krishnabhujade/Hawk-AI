@@ -68,6 +68,32 @@ a.avatar:hover { border-color: var(--color-accent); color: var(--color-accent-70
 /* ---------- Bottom tab bar (phones) ---------- */
 .bottom-nav { display: none; }
 
+/* ---------- Numeric data ----------
+   Live market data is set in the monospaced token so figures stay on a fixed
+   pitch: the watchlist, chart axes, price tags, the order ticket and the
+   header clock all read as instrument readouts rather than prose.
+   Deliberately NOT applied to the big display numbers (.verdict-dir,
+   .verdict-prob, .headline-value, .stat-value, .index-price) — those stay in
+   Barlow Condensed, where the tight condensed figures are part of the look. */
+.watch-price, .watch-change,
+.index-price, .index-change,
+.chart-price, .chart-change, .chart-target, .chart-live,
+.chart-axis-y, .chart-axis-x,
+.ticket-input,
+.header-clock, .header-replay .num,
+.dialog-row .num,
+.kv-row dd,
+.ladder-label,
+.cell-order-id, .order-reason-time {
+  font-family: var(--font-mono);
+  letter-spacing: -0.015em;
+}
+/* Mono runs wider than Barlow, so trim the larger readouts a touch to keep
+   the layouts they sit in from reflowing. */
+.chart-price { font-size: 19px; }
+.kv-row dd { font-size: 16px; }
+.ticket-input { font-size: 13px; }
+
 /* ---------- Shared bits ---------- */
 .panel-title { padding: 14px 14px 8px; }
 .panel-title h6 { margin: 0; }
@@ -183,12 +209,18 @@ a.avatar:hover { border-color: var(--color-accent); color: var(--color-accent-70
 .chart-axis-y {
   position: absolute; right: 0; top: 18px; bottom: 26px; width: 62px; padding-left: 6px;
   display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
-  font-size: 11px; color: var(--ink-45);
+  font-size: 10px; color: var(--ink-45);
 }
-.chart-axis-x { position: absolute; left: 18px; right: 66px; bottom: 0; height: 22px; font-size: 11px; color: var(--ink-45); }
+.chart-axis-x { position: absolute; left: 18px; right: 66px; bottom: 0; height: 22px; font-size: 10px; color: var(--ink-45); }
 .chart-axis-x span { position: absolute; bottom: 4px; white-space: nowrap; }
 .chart-axis-x .tick-center { transform: translateX(-50%); }
 .chart-axis-x .tick-end { transform: translateX(-100%); }
+/* The x-axis renders three time ticks, then "now" and the horizon. On a phone
+   the plot is too narrow for three dated labels, so drop the second one — the
+   first and third still bracket the session. */
+@media (max-width: 480px) {
+  .chart-axis-x span:nth-child(2) { display: none; }
+}
 
 /* Narrow charts: shorten the forecast label so it doesn't hit "NOW". */
 @container (max-width: 700px) {
@@ -304,7 +336,7 @@ input.ticket-input:focus-visible { border-color: var(--color-accent); outline-of
 }
 .index-name { font-family: var(--font-heading); font-size: 15px; letter-spacing: 0.04em; }
 .index-values { display: flex; align-items: baseline; gap: 2px 8px; margin-top: 2px; flex-wrap: wrap; }
-.index-price { font-size: 19px; }
+.index-price { font-size: 17px; }  /* mono runs wider than Barlow, so a touch smaller */
 .index-change { font-size: 12px; white-space: nowrap; }
 .spark { display: flex; align-items: flex-end; gap: 2px; height: 34px; }
 .spark > div { flex: 1; }
@@ -560,7 +592,9 @@ input.ticket-input:focus-visible { border-color: var(--color-accent); outline-of
   .data-status { font-size: 10px; letter-spacing: 0.08em; }
 
   .bottom-nav {
-    display: grid; grid-template-columns: repeat(4, 1fr);
+    /* One equal column per tab, however many there are — a fixed column count
+       silently wraps the last tab onto a second row when a screen is added. */
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
     height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
